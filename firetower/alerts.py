@@ -1,5 +1,7 @@
 import datetime
-from redis_util import Redis
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Alert(object):
@@ -10,7 +12,7 @@ class Alert(object):
 
     def send_alert(self, msg):
         """Send a quick email with the error message."""
-        print "%s: Alert! %s" % (str(datetime.datetime.now()), msg)
+        logger.info("%s: Alert! %s", datetime.datetime.now(), msg)
 
     def check_thresh(self, error_sums, timeslice, threshold):
         """Check to see if the sum exceeds the threshold for our time_slice."""

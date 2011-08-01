@@ -3,14 +3,15 @@ import datetime
 import time
 from optparse import OptionParser
 
-import config
-from redis_util import Redis
+
+from firetower.config import Config
+from firetower.redis_util import Redis
+
 
 class Display(object):
 
     def __init__(self, conf):
         self.r = Redis(conf.redis_host, conf.redis_port)
-        self.conf = conf
 
     def dump_data(self, tracked_keys):
         counts = self.r.get_counts(tracked_keys)
@@ -32,7 +33,8 @@ class Display(object):
 
     def dump_incoming(self):
         """Display length of incoming queue and its contents."""
-        print 'Incoming queue length: ', self.r.len_incoming(self.conf.queue_key)
+        print ('Incoming queue length: %s' %
+               self.r.len_incoming(self.conf.queue_key))
         print self.r.dump_incoming(self.conf.queue_key)
 
 
@@ -47,8 +49,10 @@ def main():
     if len(args) > 1:
         parser.error('Please supply some arguments')
 
-    conf = config.Config(options.conf_path)
+    conf = Config()
+    with open(options.conf_path) as conf_path:
+        conf.load(conf_path)
 
     display = Display(conf)
-    #display.dump_data(['Test Error'])
     display.dump_incoming()
+    # display.dump_data(['Test Error'])

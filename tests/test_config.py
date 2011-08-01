@@ -1,3 +1,5 @@
+from os import getcwd
+from os.path import join
 from StringIO import StringIO
 
 from firetower.config import Config
@@ -43,7 +45,8 @@ error_signatures:
 
 
 def test_simple_config():
-    conf = Config(simple_config)
+    conf = Config()
+    conf.load(simple_config)
     assert conf.redis_host == 'localhost'
     assert conf.redis_port == 6379
     assert conf.queue_key == 'incoming'
@@ -56,3 +59,12 @@ def test_simple_config():
                 'alert_thresholds': {'high': 1000, 'med': 100, 'low': 10}
                 }
             }
+
+
+def test_read_conf():
+    #XXX:dc: this only passes when you run it from the top level project
+    # directory
+    local_path = getcwd()
+    conf = Config()
+    with open(join(local_path, 'tests/fixtures/config.yaml')) as conf_file:
+        conf.load(conf_file)

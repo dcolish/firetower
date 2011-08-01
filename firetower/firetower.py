@@ -9,6 +9,7 @@ import config
 import classifier
 from redis_util import Redis
 
+
 class Main(object):
     """Main loop."""
 

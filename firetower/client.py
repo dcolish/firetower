@@ -1,16 +1,16 @@
 import random
-import simplejson as json
-import textwrap
 from optparse import OptionParser
 
-import config
-from redis_util import Redis
-import tracebacks
+from firetower.config import Config
+from firetower.redis_util import Redis
+from firetower.tracebacks import tracebacks
+from firetower.util import json
+
 
 FAKE_SIGS = [
 'Test Exception', 'Another Random Error'
 ]
-FAKE_SIGS = tracebacks.tracebacks
+FAKE_SIGS = tracebacks
 
 FAKE_DATA = {'hostname': 'testmachine',
              'msg': 'I/O Exception from some file',
@@ -48,8 +48,9 @@ def main():
     if len(args) > 1:
         parser.error('Please supply some arguments')
 
+    conf = Config()
     with open(options.conf_path) as conf_file:
-        conf = config.Config(conf_file)
+        conf.load(conf_file)
 
-        main = Client()
-        main.run(conf)
+    main = Client()
+    main.run(conf)
